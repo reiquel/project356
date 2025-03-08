@@ -190,7 +190,7 @@ h2 {
   color: var(--text-color);
 }
 
-.course-list {
+.course-group {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -201,7 +201,7 @@ h2 {
 margin-bottom: 15px;
 
 }
-.course-button {
+.course-cta {
   background-color: var(--background-color);
   padding: 8px;
   border:  1px solid var(--text-color);
@@ -213,22 +213,22 @@ margin-bottom: 15px;
   margin-bottom: 10px;
 }
 
-.course-button.completed {
+.course-cta.completed {
   background-color: #e0f7fa;
 }
 
-.course-button:hover {
+.course-cta:hover {
   background-color: #f0f0f0;
 }
 
-.course-details {
+.course-description {
   display: none;
   padding: 10px;
   background-color: #f9f9f9;
   border-top: 1px solid #ddd;
 }
 
-.course-details.active {
+.course-description.active {
   display: block;
 }
 

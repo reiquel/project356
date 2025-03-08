@@ -1,18 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
-    const currentYear = new Date().getFullYear();
-    document.getElementById('currentyear').textContent = currentYear;
+document.addEventListener('DOMContentLoaded', () => {
+    enableMenuVisibility();
+    prepareCourseFiltering();
+    presentCourses(courses);
+    showFooter();
 
-    const lastModified = document.lastModified;
-    document.getElementById('lastModified').textContent = `Last Modified: ${lastModified}`;
 
-    
-    const menuButton = document.getElementById('hamburger-button');
-    const navUl = document.querySelector('nav ul');
-
-    menuButton.addEventListener('click', function() {
-        navUl.classList.toggle('active');
-    });
+});
 
     
     const courses = [
@@ -78,53 +71,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     ];
 
-    const courseList = document.getElementById('course-list');
-    const totalCredits = document.getElementById('total-credits');
+const courseGroup = document.getElementById('course-group');
+const creditCount = document.getElementById('credit-count');
 
-    
-    function displayCourses(filteredCourses) {
-        courseList.innerHTML = ''; 
-        let total = 0;
 
-        filteredCourses.forEach(course => {
-            const courseButton = document.createElement('button');
-            courseButton.classList.add('course-button');
-            if (course.completed) {
-                courseButton.classList.add('completed');
-            }
-            courseButton.textContent = `${course.subject} ${course.number}`;
+function enableMenuVisibility() {
+    document.getElementById('hamburger-button').addEventListener('click',() => {
+        document.querySelector('nav ul').classList.toggle('active');
+    });
+}
 
-            const courseDetails = document.createElement('div');
-            courseDetails.classList.add('course-details');
-            courseDetails.innerHTML = `
-                <h3>${course.title}</h3>
-                <p>${course.description}</p>
-                <p>Credits: ${course.credits}</p>
-                <p>Technology: ${course.technology.join(', ')}</p>
-            `;
+function prepareCourseFiltering() {
+    document.getElementById('all-courses').addEventListener('click', () => presentCourses(courses));
+    document.getElementById('wdd-courses').addEventListener('click', () => presentCourses(applyCourseFilter('WDD')));
+    document.getElementById('cse-courses').addEventListener('click', () => presentCourses(applyCourseFilter('CSE')));
+}
 
-            
-            courseButton.addEventListener('click', () => {
-                courseDetails.classList.toggle('active');
-            });
+function applyCourseFilter(subject) {
+    return courses.filter(course => course.subject === subject);
+}
 
-            
-            courseList.appendChild(courseButton);
-            courseList.appendChild(courseDetails);
 
-            
-            total += course.credits;
-        });
+function presentCourses(filteredCourses) {
+    courseGroup.innerHTML = '';
 
-       
-        totalCredits.textContent = `Total Credits: ${total}`;
+    const total = filteredCourses.reduce((sum, course) => {
+        courseGroup.append(createSubjectElement(course));
+        return sum + course.credits;
+    }, 0);
+
+    creditCount.textContent = `Total Credits: ${total}`;
+}
+
+
+function createSubjectElement(course) {
+    const courseSection = document.createElement('div');
+
+    const courseBta = document.createElement('button');
+    courseBta.classList.add('course-cta');
+    if (course.completed){
+        courseBta.classList.add('completed');
     }
+    courseBta.textContent = `${course.subject} ${course.number}`;
 
-  
-    document.getElementById('all-courses').addEventListener('click', () => displayCourses(courses));
-    document.getElementById('wdd-courses').addEventListener('click', () => displayCourses(courses.filter(course => course.subject === 'WDD')));
-    document.getElementById('cse-courses').addEventListener('click', () => displayCourses(courses.filter(course => course.subject === 'CSE')));
+    const courseDescription = document.createElement('div');
+    courseDescription.classList.add('course-description');
+    courseDescription.innerHTML = `
+        <h3>${course.title}</h3>
+        <p>${course.description}<p>
+        <p>${course.credits}<p>
+        <p>${course.technology.join(',')}<p>
+    `;
+    courseBta.addEventListener('click', () => {
+        courseDescription.classList.toggle('active');
+    });
 
-   
-    displayCourses(courses);
-});
+    courseSection.append(courseBta, courseDescription);
+    return courseSection;
+}
+
+
+function showFooter() {
+    document.getElementById('currentyear').textContent = new Date().getFullYear();
+    document.getElementById('lastModified').textContent = `Last Modified: ${document.lastModified}`;
+}
